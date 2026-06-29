@@ -21,6 +21,18 @@ Start with:
 - [Before code](./scenario/checkout-service-before/src)
 - [After code](./scenario/checkout-service-after/src)
 
+The `checkout-service-before` and `checkout-service-after` folders are runnable TypeScript projects. The after-project tests are intentionally useful review signals; failing tests are part of the exercise, not a repository setup problem.
+
+```bash
+cd exercises/ex-1-code-review/scenario/checkout-service-before
+npm install
+npm test
+
+cd ../checkout-service-after
+npm install
+npm test
+```
+
 ## What To Produce
 
 Create a review file such as:
@@ -56,4 +68,3 @@ Strong submissions usually catch:
 - Edge cases around expiration, caps, negative totals, and timing-safe comparisons.
 - Missing or weakened tests.
 - Quality issues that would make future changes risky.
-

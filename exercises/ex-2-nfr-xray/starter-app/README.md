@@ -13,3 +13,10 @@ npm start
 
 Then open `http://localhost:3000`.
 
+## Run Tests
+
+```bash
+npm test
+```
+
+The app code is intentionally demo-grade. Use the modules and tests as evidence while building your NFR report.

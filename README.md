@@ -6,6 +6,8 @@ This repository contains three hands-on exercises for practicing agentic coding 
 
 The canonical repository is meant to stay unchanged. Learner pull requests are reviewed, discussed, and closed by maintainers instead of merged into `main`.
 
+Each exercise includes code inside its folder. Some projects are intentionally broken or incomplete because the exercise is to review, harden, or refactor that code.
+
 ## Exercises
 
 | # | Exercise | Focus | Link |
@@ -46,4 +48,3 @@ Each exercise README explains its expected output.
 - Exercise source changes should happen through explicit maintainer updates only.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) and [MAINTAINERS.md](./MAINTAINERS.md) for the operating model.
-
