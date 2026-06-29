@@ -1,0 +1,21 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.agents/
+skills-lock.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Java
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs and local outputs
+*.log
+coverage/
+dist/
+build/
