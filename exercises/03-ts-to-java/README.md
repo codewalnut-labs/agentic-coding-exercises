@@ -2,7 +2,9 @@
 
 ## Goal
 
-A quote service was built quickly as a TypeScript backend prototype. The company now wants the same behavior rebuilt as an enterprise-grade Java service.
+You are given a working TypeScript backend prototype for a quote calculator. It exposes a `/quotes` API and contains the business rules for customer tier discounts, promo code discounts, regional tax, and final quote totals.
+
+Your goal is to use an AI coding agent to understand that prototype and rebuild the same behavior in the Java Spring Boot starter service. The Java version should keep the external behavior the same, but improve the implementation quality with clearer domain boundaries, request validation, tests, and production-ready conventions.
 
 ## Starter Projects
 

@@ -10,7 +10,7 @@ Three simple code exercises for practicing agentic coding. Each exercise has sta
 |---|---|---|---|
 | 01 | [Code Review](./exercises/01-code-review/README.md) | React | Review a codebase to catch regressions, anti-patterns, security issues, and inconsistent quality. |
 | 02 | [NFR X-Ray](./exercises/02-nfr-xray/README.md) | React | Reverse engineer a codebase and write an NFR understanding and improvement doc. |
-| 03 | [TS Prototype to Java](./exercises/03-ts-to-java/README.md) | TypeScript + Java | Refactor a quick TypeScript backend prototype into an enterprise-grade Java service. |
+| 03 | [TS Prototype to Java](./exercises/03-ts-to-java/README.md) | TypeScript + Java | Rebuild a TS quote-service prototype as a tested Java Spring Boot service with the same behavior. |
 
 ## How Learners Should Use This Repo
 
