@@ -1,7 +1,5 @@
 # Agentic Coding Exercises
 
-![Exercise map](./image.png)
-
 Three simple code exercises for practicing agentic coding. Each exercise has starter code, a clear task, and a README inside the exercise folder.
 
 ## Exercises
@@ -27,33 +25,6 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 
 - Node.js 20+ for React and TypeScript starter projects.
 - Java 21 and Maven for Exercise 03 Java work.
-
-## Running React Starters
-
-```bash
-cd exercises/01-code-review/starter-react
-npm install
-npm run dev
-```
-
-Use the same pattern for Exercise 02.
-
-## Running Exercise 03
-
-Run the TypeScript prototype:
-
-```bash
-cd exercises/03-ts-to-java/prototype-ts
-npm install
-npm test
-```
-
-Run the Java starter:
-
-```bash
-cd exercises/03-ts-to-java/starter-java
-mvn test
-```
 
 ## Repository Rule
 
