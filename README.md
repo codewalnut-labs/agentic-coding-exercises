@@ -2,49 +2,43 @@
 
 ![Exercise map](./image.png)
 
-This repository contains three hands-on exercises for practicing agentic coding workflows. Each exercise is designed for a learner to fork the repository, use an AI coding agent as a collaborator, and submit their solution as a pull request for review.
-
-The canonical repository is meant to stay unchanged. Learner pull requests are reviewed, discussed, and closed by maintainers instead of merged into `main`.
-
-Each exercise includes code inside its folder. Some projects are intentionally broken or incomplete because the exercise is to review, harden, or refactor that code.
+Three simple code exercises for practicing agentic coding. Each exercise has starter code, a clear task, and a README inside the exercise folder.
 
 ## Exercises
 
-| # | Exercise | Focus | Link |
+| # | Exercise | Starter code | Goal |
 |---|---|---|---|
-| 01 | Code Review | Catch regressions, anti-patterns, and inconsistent code quality in a realistic diff. | [Start exercise 01](./exercises/ex-1-code-review/README.md) |
-| 02 | NFR X-Ray | Audit enterprise-grade non-functional requirements: security, performance, scalability, accessibility, observability, and operability. | [Start exercise 02](./exercises/ex-2-nfr-xray/README.md) |
-| 03 | TS Prototype to Java | Rebuild a quick TypeScript backend prototype as an enterprise-grade Java service while preserving behavior. | [Start exercise 03](./exercises/ex-3-refactoring/README.md) |
+| 01 | [Code Review](./exercises/01-code-review/README.md) | React | Review and improve a small React checkout dashboard. |
+| 02 | [NFR X-Ray](./exercises/02-nfr-xray/README.md) | React | Find and fix production-readiness gaps in a React invoice portal. |
+| 03 | [React Prototype to Java](./exercises/03-react-to-java/README.md) | React + Java | Move quote rules from a React prototype into a Java service. |
 
-## How To Participate
+## How Learners Should Use This Repo
 
 1. Fork this repository.
-2. Choose one exercise.
-3. Create a branch in your fork, for example `solution/ex-1-your-name`.
-4. Use your coding agent to complete the exercise.
-5. Commit your work with notes, tests, and evidence.
-6. Open a pull request back to this repository.
+2. Pick one exercise.
+3. Create a branch in your fork.
+4. Work inside that exercise folder.
+5. Commit your solution.
+6. Open a pull request back to this repository for review.
 
-Maintainers will review solution PRs for feedback. Solution PRs should not be merged, because `main` is the reusable exercise source.
+Solution PRs are reviewed for feedback and should not be merged into `main`. The main branch should stay as the clean exercise source.
 
-## Suggested Submission Paths
+## Requirements
 
-You can work directly in the exercise folders when the task requires code changes. For written deliverables, use:
+- Node.js 20+ for React exercises.
+- Java 21 and Maven for Exercise 03 Java work.
 
-```text
-submissions/<github-handle>/ex-1/
-submissions/<github-handle>/ex-2/
-submissions/<github-handle>/ex-3/
+## Running React Starters
+
+```bash
+cd exercises/01-code-review/starter-react
+npm install
+npm run dev
 ```
 
-Each exercise README explains its expected output.
+Use the same pattern for other `starter-react` folders.
 
-## Repository Guardrails
+## Repository Rule
 
-- `main` is protected as the exercise source.
-- Learners should submit pull requests from forks.
-- Only maintainers/admins should close or manage PRs.
-- Solution PRs are reviewed and closed, not merged.
-- Exercise source changes should happen through explicit maintainer updates only.
+Keep solutions scoped to the selected exercise. Do not change unrelated exercise folders.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) and [MAINTAINERS.md](./MAINTAINERS.md) for the operating model.

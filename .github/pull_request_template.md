@@ -1,30 +1,20 @@
 ## Exercise
 
-- [ ] Exercise 01: Code Review
-- [ ] Exercise 02: NFR X-Ray
-- [ ] Exercise 03: TS Prototype to Java
-- [ ] Maintainer update, not a learner solution
+- [ ] 01 Code Review
+- [ ] 02 NFR X-Ray
+- [ ] 03 React Prototype to Java
 
-## Summary
+## What Changed
 
-Describe what you changed or submitted.
+Briefly describe your solution.
 
-## Agent Workflow
-
-What did your coding agent do? What did you verify or change manually?
-
-## Validation Evidence
-
-List commands, tests, screenshots, or review artifacts.
+## How I Verified
 
 ```text
-paste relevant output here
+Add commands or manual checks here.
 ```
 
-## Checklist
+## Notes
 
-- [ ] I forked the repo and worked in my own branch.
-- [ ] I kept changes scoped to the selected exercise.
-- [ ] I included assumptions and tradeoffs.
-- [ ] I understand this learner PR is for review and should not be merged into `main`.
+List assumptions, tradeoffs, or follow-up work.
 
