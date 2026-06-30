@@ -8,9 +8,9 @@ Three simple code exercises for practicing agentic coding. Each exercise has sta
 
 | # | Exercise | Starter code | Goal |
 |---|---|---|---|
-| 01 | [Code Review](./exercises/01-code-review/README.md) | React | Review and improve a small React checkout dashboard. |
-| 02 | [NFR X-Ray](./exercises/02-nfr-xray/README.md) | React | Find and fix production-readiness gaps in a React invoice portal. |
-| 03 | [React Prototype to Java](./exercises/03-react-to-java/README.md) | React + Java | Move quote rules from a React prototype into a Java service. |
+| 01 | [Code Review](./exercises/01-code-review/README.md) | React | Review a codebase to catch regressions, anti-patterns, security issues, and inconsistent quality. |
+| 02 | [NFR X-Ray](./exercises/02-nfr-xray/README.md) | React | Reverse engineer a codebase and write an NFR understanding and improvement doc. |
+| 03 | [TS Prototype to Java](./exercises/03-ts-to-java/README.md) | TypeScript + Java | Refactor a quick TypeScript backend prototype into an enterprise-grade Java service. |
 
 ## How Learners Should Use This Repo
 
@@ -25,7 +25,7 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 
 ## Requirements
 
-- Node.js 20+ for React exercises.
+- Node.js 20+ for React and TypeScript starter projects.
 - Java 21 and Maven for Exercise 03 Java work.
 
 ## Running React Starters
@@ -36,9 +36,25 @@ npm install
 npm run dev
 ```
 
-Use the same pattern for other `starter-react` folders.
+Use the same pattern for Exercise 02.
+
+## Running Exercise 03
+
+Run the TypeScript prototype:
+
+```bash
+cd exercises/03-ts-to-java/prototype-ts
+npm install
+npm test
+```
+
+Run the Java starter:
+
+```bash
+cd exercises/03-ts-to-java/starter-java
+mvn test
+```
 
 ## Repository Rule
 
 Keep solutions scoped to the selected exercise. Do not change unrelated exercise folders.
-

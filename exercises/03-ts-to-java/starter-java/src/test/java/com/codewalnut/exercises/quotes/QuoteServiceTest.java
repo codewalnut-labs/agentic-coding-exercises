@@ -9,7 +9,7 @@ class QuoteServiceTest {
     private final QuoteService quoteService = new QuoteService();
 
     @Test
-    void matchesReactPrototypeForGrowthCustomerWithSave10() {
+    void matchesTypeScriptPrototypeForGrowthCustomerWithSave10() {
         QuoteResponse response = quoteService.buildQuote(new QuoteRequest(
             QuoteRequest.CustomerTier.growth,
             QuoteRequest.Region.US,
@@ -27,4 +27,3 @@ class QuoteServiceTest {
         assertThat(response.total()).isEqualTo(1347.71);
     }
 }
-

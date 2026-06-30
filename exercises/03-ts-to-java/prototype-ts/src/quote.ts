@@ -1,16 +1,47 @@
-const TIER_DISCOUNTS = {
+export type CustomerTier = "starter" | "growth" | "enterprise";
+export type Region = "US" | "EU" | "IN";
+export type Category = "software" | "services" | "hardware";
+export type PromoCode = "SAVE10" | "SERVICES15";
+
+export type QuoteItem = {
+  sku: string;
+  quantity: number;
+  unitPrice: number;
+  category: Category;
+};
+
+export type QuoteRequest = {
+  customerTier: CustomerTier;
+  region: Region;
+  promoCode?: PromoCode;
+  items: QuoteItem[];
+};
+
+export type QuoteResponse = {
+  subtotal: number;
+  tierDiscount: number;
+  promoDiscount: number;
+  tax: number;
+  total: number;
+};
+
+const TIER_DISCOUNTS: Record<CustomerTier, number> = {
   starter: 0,
   growth: 0.07,
   enterprise: 0.12,
 };
 
-const TAX_RATES = {
+const TAX_RATES: Record<Region, number> = {
   US: 0.0825,
   EU: 0.2,
   IN: 0.18,
 };
 
-export function buildQuote(request) {
+export function buildQuote(request: QuoteRequest): QuoteResponse {
+  if (!request.items.length) {
+    throw new Error("items are required");
+  }
+
   const subtotal = request.items.reduce((sum, item) => {
     return sum + item.quantity * item.unitPrice;
   }, 0);
@@ -21,7 +52,7 @@ export function buildQuote(request) {
   const tax = roundMoney(taxableAmount * TAX_RATES[request.region]);
 
   return {
-    subtotal,
+    subtotal: roundMoney(subtotal),
     tierDiscount,
     promoDiscount,
     tax,
@@ -29,7 +60,7 @@ export function buildQuote(request) {
   };
 }
 
-function calculatePromoDiscount(request, subtotal) {
+function calculatePromoDiscount(request: QuoteRequest, subtotal: number): number {
   if (request.promoCode === "SAVE10") {
     return Math.min(roundMoney(subtotal * 0.1), 200);
   }
@@ -44,7 +75,7 @@ function calculatePromoDiscount(request, subtotal) {
   return 0;
 }
 
-function roundMoney(value) {
+function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
 }
 

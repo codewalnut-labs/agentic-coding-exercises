@@ -2,7 +2,7 @@
 
 ## Goal
 
-Use an agent to review and improve a small React checkout dashboard. The starter project has realistic bugs, anti-patterns, and inconsistent code quality.
+Use an AI coding agent to review a small React checkout dashboard. The goal is to catch regressions, anti-patterns, bad conventions, security issues, and inconsistent code quality.
 
 ## Starter Project
 
@@ -20,7 +20,7 @@ npm run dev
 
 ## Task
 
-Review the code and improve it. Focus on:
+Use an agent to inspect the codebase and produce a code review. Focus on:
 
 - Bugs in checkout totals.
 - Unsafe rendering.
@@ -31,8 +31,14 @@ Review the code and improve it. Focus on:
 
 ## Expected Output
 
-Submit code changes in this exercise folder and add a short `NOTES.md` explaining:
+Add a `CODE_REVIEW.md` file in this exercise folder.
+
+Your review should include:
 
 - Top issues you found.
-- What you fixed.
-- What you would still improve with more time.
+- File references.
+- Why each issue matters.
+- Suggested fixes.
+- Any tests you would add.
+
+You may also fix issues in code, but the main deliverable is the review.

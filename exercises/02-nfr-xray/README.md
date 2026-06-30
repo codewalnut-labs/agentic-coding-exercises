@@ -2,7 +2,7 @@
 
 ## Goal
 
-Use an agent to inspect a React invoice portal for enterprise non-functional requirements.
+Use an AI coding agent to reverse engineer a React invoice portal and document its non-functional requirements.
 
 ## Starter Project
 
@@ -20,7 +20,7 @@ npm run dev
 
 ## Task
 
-Review and improve the starter app for:
+Inspect the codebase and produce an NFR understanding doc. Cover:
 
 - Security and privacy.
 - Accessibility.
@@ -32,9 +32,14 @@ Review and improve the starter app for:
 
 ## Expected Output
 
-Submit code changes in this exercise folder and add a short `NFR_NOTES.md` explaining:
+Add an `NFR_XRAY.md` file in this exercise folder.
 
-- Top production risks.
-- Which risks you fixed in code.
-- What controls or monitoring you recommend next.
+Your document should include:
 
+- What the app does.
+- Current NFR gaps.
+- Risk level for each gap.
+- Recommended improvements.
+- Suggested tests, controls, and monitoring.
+
+You may also make small code improvements, but the main deliverable is the NFR doc.
