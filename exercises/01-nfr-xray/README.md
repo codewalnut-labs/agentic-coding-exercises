@@ -24,11 +24,11 @@ npm run dev
 
 Use the [Architect Playbook](https://github.com/CW-Codewalnut/ArchitectPlaybook) to guide the audit.
 
-You can complete this exercise with Claude Code or any other coding agent. The slash-command install below is for Claude Code only; if your agent does not support Claude Code slash commands, use the Architect Playbook repository as audit reference material.
+You can complete this exercise with Claude Code or any other coding agent. Use the Architect Playbook as the audit checklist and install it when your agent supports that workflow; otherwise, keep the playbook open as reference material while auditing.
 
 ### Install The Playbook
 
-For Claude Code users:
+Open the playbook in Claude Code or any other coding agent:
 
 ```bash
 git clone https://github.com/CW-Codewalnut/ArchitectPlaybook ~/architect-playbook
