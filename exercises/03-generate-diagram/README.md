@@ -35,8 +35,6 @@ The diagrams should show actors, state transitions, system steps,
 success paths, and failure/rollback paths.
 ```
 
-Use [reference/feature-brief.md](./reference/feature-brief.md) as product context.
-
 ## Expected Output
 
 Add a `diagrams` folder inside this exercise folder containing:

@@ -23,7 +23,6 @@ npm run dev
 ## PR To Review
 
 ```text
-exercises/02-code-review/pr/description.md
 exercises/02-code-review/pr/review-target.diff
 ```
 
