@@ -4,7 +4,7 @@
 
 ## Your Mission
 
-Generate a diagram for your feature.
+Generate diagrams for a feature.
 
 You are given a React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
 
