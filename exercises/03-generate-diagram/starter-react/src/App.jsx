@@ -1,15 +1,19 @@
 import { useMemo, useState } from "react";
+import { IntegrationPanel } from "./components/IntegrationPanel.jsx";
+import { RequestBoard } from "./components/RequestBoard.jsx";
+import { RequestSummary } from "./components/RequestSummary.jsx";
+import { Timeline } from "./components/Timeline.jsx";
+import { WorkflowMap } from "./components/WorkflowMap.jsx";
 import { accessRequests } from "./data/accessRequests.js";
-import { nextStepFor } from "./workflow.js";
+import { applyWorkflowStep, buildActorList, buildFlowSteps, nextStepFor } from "./workflow.js";
 
 export default function App() {
   const [requests, setRequests] = useState(accessRequests);
   const [selectedId, setSelectedId] = useState(accessRequests[0].id);
   const selected = requests.find((request) => request.id === selectedId);
 
-  const timeline = useMemo(() => {
-    return selected.history.map((event) => `${event.actor}: ${event.action}`);
-  }, [selected]);
+  const actors = useMemo(() => buildActorList(selected), [selected]);
+  const flowSteps = useMemo(() => buildFlowSteps(selected), [selected]);
 
   function advanceWorkflow() {
     const nextRequests = requests.map((request) => {
@@ -18,14 +22,28 @@ export default function App() {
       }
 
       const nextStep = nextStepFor(request);
-      return {
-        ...request,
-        status: nextStep.status,
-        history: [...request.history, nextStep.event],
-      };
+      return applyWorkflowStep(request, nextStep);
     });
 
     setRequests(nextRequests);
+  }
+
+  function markProvisioningHealthy() {
+    setRequests((currentRequests) =>
+      currentRequests.map((request) =>
+        request.id === selected.id
+          ? {
+              ...request,
+              provisioningHealthy: true,
+              integrations: request.integrations.map((integration) =>
+                integration.name === "Identity Provider"
+                  ? { ...integration, status: "healthy", lastRun: "Manual retry queued" }
+                  : integration,
+              ),
+            }
+          : request,
+      ),
+    );
   }
 
   return (
@@ -34,53 +52,28 @@ export default function App() {
         <div>
           <p className="eyebrow">Exercise 03</p>
           <h1>Access Request Workflow</h1>
+          <p>Use this feature to generate a sequence diagram and a flow diagram.</p>
         </div>
-        <button type="button" onClick={advanceWorkflow}>
-          Advance workflow
-        </button>
+        <div className="header-actions">
+          <button type="button" onClick={advanceWorkflow}>
+            Advance workflow
+          </button>
+          <button className="secondary-button" type="button" onClick={markProvisioningHealthy}>
+            Retry provisioning
+          </button>
+        </div>
       </header>
 
       <section className="layout">
-        <aside className="panel request-list">
-          {requests.map((request) => (
-            <button
-              type="button"
-              key={request.id}
-              className={request.id === selected.id ? "request active" : "request"}
-              onClick={() => setSelectedId(request.id)}
-            >
-              <strong>{request.employee}</strong>
-              <span>{request.status}</span>
-            </button>
-          ))}
-        </aside>
+        <RequestBoard requests={requests} selectedId={selected.id} onSelect={setSelectedId} />
 
-        <section className="panel">
-          <h2>{selected.systemName}</h2>
-          <dl className="metadata">
-            <div>
-              <dt>Employee</dt>
-              <dd>{selected.employee}</dd>
-            </div>
-            <div>
-              <dt>Manager</dt>
-              <dd>{selected.manager}</dd>
-            </div>
-            <div>
-              <dt>Risk</dt>
-              <dd>{selected.risk}</dd>
-            </div>
-          </dl>
-
-          <h3>Timeline</h3>
-          <ol>
-            {timeline.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
+        <section className="main-column">
+          <RequestSummary request={selected} actors={actors} />
+          <WorkflowMap request={selected} steps={flowSteps} />
+          <IntegrationPanel request={selected} />
+          <Timeline events={selected.history} />
         </section>
       </section>
     </main>
   );
 }
-

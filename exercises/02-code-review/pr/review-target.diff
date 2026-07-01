@@ -1,44 +1,134 @@
 diff --git a/src/App.jsx b/src/App.jsx
-index 5a31222..81be901 100644
+index 13d1ef4..bb87221 100644
 --- a/src/App.jsx
 +++ b/src/App.jsx
 @@
--  const visibleRenewals = renewals.filter((renewal) =>
--    renewal.customer.toLowerCase().includes(query.toLowerCase()),
--  );
-+  const visibleRenewals = renewals.filter((renewal) => renewal.customer.includes(query));
+-  const visibleRenewals = useMemo(() => {
+-    const normalizedQuery = query.trim().toLowerCase();
+-    return renewalRows.filter((renewal) => {
+-      const matchesQuery =
+-        renewal.customer.toLowerCase().includes(normalizedQuery) ||
+-        renewal.ownerEmail.toLowerCase().includes(normalizedQuery);
++  const visibleRenewals = useMemo(() => {
++    return renewalRows.filter((renewal) => {
++      const matchesQuery = renewal.customer.includes(query) || renewal.ownerEmail.includes(query);
+       const matchesStatus = status === "all" || renewal.status === status;
+       const matchesSegment = segment === "all" || renewal.segment === segment;
+       return matchesQuery && matchesStatus && matchesSegment;
 @@
 -  function approveRenewal(id) {
--    setRenewals((current) =>
--      current.map((renewal) =>
--        renewal.id === id ? { ...renewal, status: "approved" } : renewal,
--      ),
+-    setRenewalRows((currentRows) =>
+-      currentRows.map((renewal) => {
+-        if (renewal.id !== id || !canApproveRenewal(currentUser, renewal)) {
+-          return renewal;
+-        }
+-
+-        const approved = {
+-          ...renewal,
+-          status: "approved",
+-          approvedBy: currentUser.email,
+-          approvedAt: new Date().toISOString(),
+-        };
+-        recordApproval(currentUser, approved);
+-        return approved;
+-      }),
 -    );
 +  function approveRenewal(id) {
-+    const renewal = renewals.find((item) => item.id === id);
++    const renewal = renewalRows.find((item) => item.id === id);
++    if (!canApproveRenewal(currentUser, renewal)) {
++      return;
++    }
++
 +    renewal.status = "approved";
 +    renewal.approvedBy = currentUser.email;
-+    setRenewals(renewals);
++    renewal.approvedAt = new Date().toISOString();
++    recordApproval(currentUser, renewal);
++    setRenewalRows(renewalRows);
    }
 @@
--          {visibleRenewals.map((renewal) => (
--            <article className="renewal-card" key={renewal.id}>
-+          {visibleRenewals.map((renewal, index) => (
-+            <article className="renewal-card" key={index}>
+-  function requestException(id) {
+-    setRenewalRows((currentRows) =>
+-      currentRows.map((renewal) =>
+-        renewal.id === id ? { ...renewal, status: "exception-requested" } : renewal,
+-      ),
+-    );
++  function requestException(id) {
++    const renewal = renewalRows.find((item) => item.id === id);
++    renewal.status = "exception-requested";
++    renewal.exceptionRequestedBy = currentUser.email;
++    setRenewalRows(renewalRows);
+   }
+diff --git a/src/components/RenewalTable.jsx b/src/components/RenewalTable.jsx
+index 71a52ac..84de912 100644
+--- a/src/components/RenewalTable.jsx
++++ b/src/components/RenewalTable.jsx
 @@
--                <p>{renewal.note}</p>
-+                <p dangerouslySetInnerHTML={{ __html: renewal.note }} />
+-        {renewals.map((renewal) => (
++        {renewals.map((renewal, index) => (
+           <article
+             className={renewal.id === selectedId ? "renewal-card selected" : "renewal-card"}
+-            key={renewal.id}
++            key={index}
+             onClick={() => onSelect(renewal.id)}
+           >
 @@
--                <strong>${projectedTotal(renewal).toLocaleString()}</strong>
-+                <strong>${projectedTotal(renewal)}</strong>
+-              <p>{renewal.note}</p>
++              <p dangerouslySetInnerHTML={{ __html: renewal.note }} />
+diff --git a/src/permissions.js b/src/permissions.js
+index 3ac5bf7..d725ad4 100644
+--- a/src/permissions.js
++++ b/src/permissions.js
+@@
+ export function canApproveRenewal(user, renewal) {
+   if (!renewal) {
+     return false;
+   }
+
+-  const withinLimit = renewal.contractValue <= user.approvalLimit;
+-  const sameRegion = renewal.region === user.region;
+-  const needsException = renewal.discountPercent > 0.25 || renewal.status === "exception-requested";
+-  return user.role === "sales-manager" && withinLimit && sameRegion && !needsException;
++  return user.role !== "viewer" && renewal.status !== "approved";
+ }
 diff --git a/src/pricing.js b/src/pricing.js
-index 9df4211..d2ccaa2 100644
+index b4f6b10..77fa21e 100644
 --- a/src/pricing.js
 +++ b/src/pricing.js
 @@
  export function projectedTotal(renewal) {
--  const discount = Math.min(renewal.discountPercent, 0.25);
--  return Math.round(renewal.contractValue * (1 - discount));
-+  return renewal.contractValue - renewal.contractValue * renewal.discountPercent;
+-  const cappedDiscount = Math.min(renewal.discountPercent, 0.25);
+-  return Math.round(renewal.contractValue * (1 - cappedDiscount) + renewal.expansionARR);
++  return renewal.contractValue - renewal.contractValue * renewal.discountPercent + renewal.expansionARR;
  }
-
+@@
+-  const totalContractValue = renewals.reduce((total, renewal) => total + renewal.contractValue, 0);
+-  const weightedDiscount =
+-    totalContractValue === 0
+-      ? 0
+-      : renewals.reduce((total, renewal) => total + renewal.discountPercent * renewal.contractValue, 0) /
+-        totalContractValue;
++  const weightedDiscount =
++    renewals.reduce((total, renewal) => total + renewal.discountPercent * renewal.contractValue, 0) /
++    renewals.reduce((total, renewal) => total + renewal.contractValue, 0);
+diff --git a/src/services/auditLog.js b/src/services/auditLog.js
+index c0ab432..f44cfe1 100644
+--- a/src/services/auditLog.js
++++ b/src/services/auditLog.js
+@@
+ export function recordApproval(user, renewal) {
+   const event = {
+     type: "renewal.approved",
+-    actorEmail: user.email,
+-    renewalId: renewal.id,
+-    customer: renewal.customer,
+-    approvedAt: renewal.approvedAt,
++    user,
++    renewal,
++    token: localStorage.getItem("renewal-admin-token"),
+     createdAt: new Date().toISOString(),
+   };
+@@
+-  sendAuditEvent(event);
++  localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(existingEvents));
++  console.info("approval audit event", event);
+ }

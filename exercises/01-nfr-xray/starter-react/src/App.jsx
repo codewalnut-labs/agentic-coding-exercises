@@ -1,35 +1,89 @@
 import { useMemo, useState } from "react";
-import { enterpriseRequests } from "./data/requests.js";
-import { loadDraft, saveDraft } from "./services/draftStore.js";
+import { AuditFeed } from "./components/AuditFeed.jsx";
+import { IntakeForm } from "./components/IntakeForm.jsx";
+import { MetricStrip } from "./components/MetricStrip.jsx";
+import { PageHeader } from "./components/PageHeader.jsx";
+import { RequestDetails } from "./components/RequestDetails.jsx";
+import { RequestQueue } from "./components/RequestQueue.jsx";
+import { auditEvents, controlCatalog, enterpriseRequests, tenants } from "./data/requests.js";
+import { loadDraft, publishApprovalEvent, saveDraft, submitDraft } from "./services/draftStore.js";
+import { summarizeTenant } from "./utils/risk.js";
 
 export default function App() {
-  const [tenant, setTenant] = useState("acme-bank");
+  const [tenantId, setTenantId] = useState(tenants[0].id);
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState(loadDraft());
   const [requests, setRequests] = useState(enterpriseRequests);
+  const [selectedId, setSelectedId] = useState(enterpriseRequests[0].id);
+
+  const tenant = tenants.find((item) => item.id === tenantId) ?? tenants[0];
+
+  const tenantRequests = useMemo(() => {
+    return requests.filter((request) => request.tenantId === tenantId);
+  }, [requests, tenantId]);
 
   const visibleRequests = useMemo(() => {
-    return requests
-      .filter((request) => request.tenantId === tenant)
-      .filter((request) => request.vendor.includes(query) || request.ownerEmail.includes(query));
-  }, [query, requests, tenant]);
+    return tenantRequests.filter((request) => {
+      return (
+        request.vendor.includes(query) ||
+        request.ownerEmail.includes(query) ||
+        request.department.includes(query)
+      );
+    });
+  }, [query, tenantRequests]);
+
+  const metrics = useMemo(() => summarizeTenant(tenantRequests), [tenantRequests]);
+
+  const selectedRequest =
+    visibleRequests.find((request) => request.id === selectedId) ??
+    visibleRequests[0] ??
+    tenantRequests[0];
 
   function approveRequest(id) {
+    let approvedRequest;
     const nextRequests = requests.map((request) => {
       if (request.id !== id) {
         return request;
       }
 
-      return {
+      approvedRequest = {
         ...request,
         status: "approved",
         approvedBy: draft.ownerEmail,
         approvedAt: new Date().toISOString(),
       };
+
+      return approvedRequest;
     });
 
-    console.log("approval event", nextRequests.find((request) => request.id === id));
+    publishApprovalEvent({
+      action: "vendor.approved",
+      tenantId,
+      actor: draft.ownerEmail,
+      request: approvedRequest,
+    });
     setRequests(nextRequests);
+  }
+
+  function blockRequest(id) {
+    setRequests((currentRequests) =>
+      currentRequests.map((request) =>
+        request.id === id
+          ? {
+              ...request,
+              status: "blocked",
+              blockedAt: new Date().toISOString(),
+              blockedReason: "Manual reviewer hold",
+            }
+          : request,
+      ),
+    );
+  }
+
+  function createRequest() {
+    const newRequest = submitDraft(draft, tenant);
+    setRequests((currentRequests) => [newRequest, ...currentRequests]);
+    setSelectedId(newRequest.id);
   }
 
   function updateDraft(field, value) {
@@ -40,69 +94,37 @@ export default function App() {
 
   return (
     <main className="shell">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Exercise 01</p>
-          <h1>Vendor Risk Intake</h1>
-        </div>
-        <select value={tenant} onChange={(event) => setTenant(event.target.value)}>
-          <option value="acme-bank">Acme Bank</option>
-          <option value="northwind-health">Northwind Health</option>
-          <option value="globex-retail">Globex Retail</option>
-        </select>
-      </header>
+      <PageHeader
+        tenant={tenant}
+        tenants={tenants}
+        onTenantChange={(nextTenantId) => {
+          setTenantId(nextTenantId);
+          setSelectedId("");
+        }}
+      />
+
+      <MetricStrip metrics={metrics} />
 
       <section className="grid">
-        <form className="panel">
-          <h2>New request</h2>
-          <input
-            placeholder="Vendor legal name"
-            value={draft.vendor}
-            onChange={(event) => updateDraft("vendor", event.target.value)}
-          />
-          <input
-            placeholder="Owner email"
-            value={draft.ownerEmail}
-            onChange={(event) => updateDraft("ownerEmail", event.target.value)}
-          />
-          <textarea
-            placeholder="Business justification"
-            value={draft.justification}
-            onChange={(event) => updateDraft("justification", event.target.value)}
-          />
-          <button type="button">Submit risk review</button>
-        </form>
+        <IntakeForm draft={draft} onChange={updateDraft} onSubmit={createRequest} tenant={tenant} />
 
-        <section className="panel">
-          <div className="queue-header">
-            <h2>Review queue</h2>
-            <input
-              placeholder="Search queue"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
+        <RequestQueue
+          query={query}
+          requests={visibleRequests}
+          selectedId={selectedRequest?.id}
+          onQueryChange={setQuery}
+          onSelect={setSelectedId}
+        />
 
-          <div className="request-list">
-            {visibleRequests.map((request, index) => (
-              <article className="request-card" key={index}>
-                <div>
-                  <strong>{request.vendor}</strong>
-                  <p>{request.ownerEmail}</p>
-                  <p dangerouslySetInnerHTML={{ __html: request.riskSummaryHtml }} />
-                </div>
-                <div className="request-actions">
-                  <span className={request.status}>{request.status}</span>
-                  <button type="button" onClick={() => approveRequest(request.id)}>
-                    Approve
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <RequestDetails
+          controls={controlCatalog}
+          request={selectedRequest}
+          onApprove={approveRequest}
+          onBlock={blockRequest}
+        />
+
+        <AuditFeed events={auditEvents} />
       </section>
     </main>
   );
 }
-
