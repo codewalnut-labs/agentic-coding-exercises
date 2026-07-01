@@ -1,6 +1,6 @@
 # Agentic Coding Exercises
 
-Three agentic coding exercises. Each exercise gives learners a medium-sized React starter codebase and a focused agent workflow to practice.
+Three agentic coding exercises. Each exercise gives learners a React starter codebase and a focused agent workflow to practice.
 
 ## Exercises
 

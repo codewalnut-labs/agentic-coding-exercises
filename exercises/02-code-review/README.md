@@ -6,7 +6,7 @@
 
 Review a PR in 5 minutes.
 
-You are given a medium-sized React project and a PR diff. Use Claude Code or any other AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
+You are given a React project and a PR diff. Use Claude Code or any other AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
 
 ## Starter Project
 

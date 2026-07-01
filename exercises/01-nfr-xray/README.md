@@ -6,7 +6,7 @@
 
 Check whether a codebase is Enterprise ready or not.
 
-You are given a medium-sized React portal that looks like an internal enterprise workflow tool. Use Claude Code or any other AI coding agent to reverse engineer the repo and audit it.
+You are given a React portal that looks like an internal enterprise workflow tool. Use Claude Code or any other AI coding agent to reverse engineer the repo and audit it.
 
 ## Starter Project
 

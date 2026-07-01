@@ -6,7 +6,7 @@
 
 Generate a diagram for your feature.
 
-You are given a medium-sized React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
+You are given a React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
 
 ## Starter Project
 
