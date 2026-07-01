@@ -34,4 +34,4 @@ Add a `diagrams` folder inside this exercise folder containing:
 - `flow-diagram` export or source.
 - `DIAGRAM_NOTES.md` explaining what each diagram shows.
 
-Diagrams can be Excalidraw files, images, Mermaid, or another format your agent produces. Excalidraw is preferred.
+Diagrams can be Excalidraw files or images. Excalidraw is preferred.
