@@ -22,18 +22,7 @@ npm run dev
 
 ## How To Go About It
 
-Use the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) if your agent supports skills. If not, use the linked skill as diagram guidance and ask your coding agent to generate the diagrams.
-
-Suggested agent prompt:
-
-```text
-Use the Excalidraw diagram-generator skill from
-https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator
-to inspect the feature in exercises/03-generate-diagram/starter-react.
-Generate a sequence diagram and a flow diagram for the feature.
-The diagrams should show actors, state transitions, system steps,
-success paths, and failure/rollback paths.
-```
+Install the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) and use it to inspect the feature. Generate a sequence diagram and a flow diagram that show actors, state transitions, system steps, success paths, and failure paths.
 
 ## Expected Output
 
