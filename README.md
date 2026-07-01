@@ -1,14 +1,14 @@
 # Agentic Coding Exercises
 
-Three simple code exercises for practicing agentic coding. Each exercise has starter code, a clear task, and a README inside the exercise folder.
+Three agentic coding exercises. Each exercise gives learners a small codebase and a focused agent workflow to practice.
 
 ## Exercises
 
 | # | Exercise | Starter code | Goal |
 |---|---|---|---|
-| 01 | [Code Review](./exercises/01-code-review/README.md) | React | Review a codebase to catch regressions, anti-patterns, security issues, and inconsistent quality. |
-| 02 | [NFR X-Ray](./exercises/02-nfr-xray/README.md) | React | Reverse engineer a codebase and write an NFR understanding and improvement doc. |
-| 03 | [TS Prototype to Java](./exercises/03-ts-to-java/README.md) | TypeScript + Java | Rebuild a TS quote-service prototype as a tested Java Spring Boot service with the same behavior. |
+| 01 | [NFR X-Ray](./exercises/01-nfr-xray/README.md) | React | Check whether a codebase is enterprise-ready. |
+| 02 | [Code Review](./exercises/02-code-review/README.md) | React + PR diff | Review a PR in 5 minutes and rank issues by severity. |
+| 03 | [Generate Diagram](./exercises/03-generate-diagram/README.md) | React feature | Generate sequence and flow diagrams for a feature. |
 
 ## How Learners Should Use This Repo
 
@@ -23,8 +23,9 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 
 ## Requirements
 
-- Node.js 20+ for React and TypeScript starter projects.
-- Java 21 and Maven for Exercise 03 Java work.
+- Node.js 20+ for starter projects.
+- An AI coding agent.
+- Optional external tools: Superpowers code-review skill and Excalidraw diagram-generator skill.
 
 ## Repository Rule
 

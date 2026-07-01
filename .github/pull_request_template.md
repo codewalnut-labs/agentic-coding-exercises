@@ -1,8 +1,8 @@
 ## Exercise
 
-- [ ] 01 Code Review
-- [ ] 02 NFR X-Ray
-- [ ] 03 TS Prototype to Java
+- [ ] 01 NFR X-Ray
+- [ ] 02 Code Review
+- [ ] 03 Generate Diagram
 
 ## What Changed
 

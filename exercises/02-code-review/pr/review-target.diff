@@ -1,0 +1,44 @@
+diff --git a/src/App.jsx b/src/App.jsx
+index 5a31222..81be901 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@
+-  const visibleRenewals = renewals.filter((renewal) =>
+-    renewal.customer.toLowerCase().includes(query.toLowerCase()),
+-  );
++  const visibleRenewals = renewals.filter((renewal) => renewal.customer.includes(query));
+@@
+-  function approveRenewal(id) {
+-    setRenewals((current) =>
+-      current.map((renewal) =>
+-        renewal.id === id ? { ...renewal, status: "approved" } : renewal,
+-      ),
+-    );
++  function approveRenewal(id) {
++    const renewal = renewals.find((item) => item.id === id);
++    renewal.status = "approved";
++    renewal.approvedBy = currentUser.email;
++    setRenewals(renewals);
+   }
+@@
+-          {visibleRenewals.map((renewal) => (
+-            <article className="renewal-card" key={renewal.id}>
++          {visibleRenewals.map((renewal, index) => (
++            <article className="renewal-card" key={index}>
+@@
+-                <p>{renewal.note}</p>
++                <p dangerouslySetInnerHTML={{ __html: renewal.note }} />
+@@
+-                <strong>${projectedTotal(renewal).toLocaleString()}</strong>
++                <strong>${projectedTotal(renewal)}</strong>
+diff --git a/src/pricing.js b/src/pricing.js
+index 9df4211..d2ccaa2 100644
+--- a/src/pricing.js
++++ b/src/pricing.js
+@@
+ export function projectedTotal(renewal) {
+-  const discount = Math.min(renewal.discountPercent, 0.25);
+-  return Math.round(renewal.contractValue * (1 - discount));
++  return renewal.contractValue - renewal.contractValue * renewal.discountPercent;
+ }
+

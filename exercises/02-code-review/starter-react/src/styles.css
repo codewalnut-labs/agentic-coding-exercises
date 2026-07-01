@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1f2937;
+  background: #edf7f1;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.shell {
+  width: min(1040px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.page-header,
+.renewal-card {
+  border: 1px solid #cbd5d1;
+  background: #ffffff;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #247857;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+p {
+  margin-top: 0;
+}
+
+input {
+  width: min(320px, 100%);
+  border: 1px solid #aab7b0;
+  padding: 10px 12px;
+}
+
+.renewal-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.renewal-card {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+}
+
+.renewal-card p {
+  margin-bottom: 0;
+  color: #52635b;
+}
+
+.money {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+button {
+  border: 0;
+  padding: 10px 14px;
+  color: #ffffff;
+  background: #247857;
+}
+
+@media (max-width: 760px) {
+  .page-header,
+  .renewal-card {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .money {
+    justify-items: start;
+  }
+}
+
