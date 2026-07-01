@@ -29,12 +29,14 @@ exercises/02-code-review/pr/review-target.diff
 
 ## How To Go About It
 
-Run the Superpowers code-review skill on the PR and read the issues it surfaces by severity.
+Run the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) on the PR and read the issues it surfaces by severity.
 
 Suggested agent prompt:
 
 ```text
-Review the PR in exercises/02-code-review/pr in 5 minutes.
+Use the Superpowers code-review skill from
+https://www.skills.sh/obra/superpowers/requesting-code-review
+to review the PR in exercises/02-code-review/pr in 5 minutes.
 Prioritize regressions, anti-patterns, security issues, inconsistent code quality,
 missing tests, and user-facing behavior changes. Return findings by severity.
 ```
@@ -50,4 +52,3 @@ Your review should include:
 - Why each issue matters.
 - Suggested fixes.
 - Tests that should be added.
-

@@ -25,7 +25,12 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 
 - Node.js 20+ for starter projects.
 - An AI coding agent.
-- Optional external tools: Superpowers code-review skill and Excalidraw diagram-generator skill.
+
+## Recommended Resources
+
+- Exercise 01: [Architect Playbook](https://github.com/CW-Codewalnut/ArchitectPlaybook)
+- Exercise 02: [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review)
+- Exercise 03: [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator)
 
 ## Repository Rule
 

@@ -22,12 +22,14 @@ npm run dev
 
 ## How To Go About It
 
-Use the Excalidraw diagram-generator skill on the feature you built or inspected.
+Use the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) on the feature you built or inspected.
 
 Suggested agent prompt:
 
 ```text
-Inspect the feature in exercises/03-generate-diagram/starter-react.
+Use the Excalidraw diagram-generator skill from
+https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator
+to inspect the feature in exercises/03-generate-diagram/starter-react.
 Generate a sequence diagram and a flow diagram for the feature.
 The diagrams should show actors, state transitions, system steps,
 success paths, and failure/rollback paths.
@@ -44,4 +46,3 @@ Add a `diagrams` folder inside this exercise folder containing:
 - `DIAGRAM_NOTES.md` explaining what each diagram shows.
 
 Diagrams can be Excalidraw files, images, Mermaid, or another format your agent produces. Excalidraw is preferred.
-

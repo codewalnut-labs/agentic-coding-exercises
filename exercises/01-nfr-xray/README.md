@@ -22,14 +22,15 @@ npm run dev
 
 ## How To Go About It
 
-Use the [Architect Playbook](./architect-playbook.md) to guide the audit.
+Use the [Architect Playbook](https://github.com/CW-Codewalnut/ArchitectPlaybook) to guide the audit.
 
 Ask your agent to inspect the codebase and produce an enterprise-readiness report. Do not start by fixing code. First understand the system, risks, and missing controls.
 
 Suggested agent prompt:
 
 ```text
-Use the Architect Playbook to audit this repo for enterprise readiness.
+Use the Architect Playbook from https://github.com/CW-Codewalnut/ArchitectPlaybook
+to audit this repo for enterprise readiness.
 Reverse engineer what the app does, then assess security, performance,
 scalability, accessibility, testing, observability, and operability.
 Rank issues by severity and suggest concrete improvements.
@@ -47,4 +48,3 @@ Your document should include:
 - Evidence from the code.
 - Recommended improvements.
 - Tests or checks you would add before production.
-
