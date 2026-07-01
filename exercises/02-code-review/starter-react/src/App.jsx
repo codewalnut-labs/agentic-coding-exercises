@@ -24,8 +24,11 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(renewals[0].id);
 
   const visibleRenewals = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
     return renewalRows.filter((renewal) => {
-      const matchesQuery = renewal.customer.includes(query) || renewal.ownerEmail.includes(query);
+      const matchesQuery =
+        renewal.customer.toLowerCase().includes(normalizedQuery) ||
+        renewal.ownerEmail.toLowerCase().includes(normalizedQuery);
       const matchesStatus = status === "all" || renewal.status === status;
       const matchesSegment = segment === "all" || renewal.segment === segment;
       return matchesQuery && matchesStatus && matchesSegment;
@@ -38,23 +41,32 @@ export default function App() {
   const portfolio = useMemo(() => summarizePortfolio(visibleRenewals), [visibleRenewals]);
 
   function approveRenewal(id) {
-    const renewal = renewalRows.find((item) => item.id === id);
-    if (!canApproveRenewal(currentUser, renewal)) {
-      return;
-    }
+    setRenewalRows((currentRows) =>
+      currentRows.map((renewal) => {
+        if (renewal.id !== id || !canApproveRenewal(currentUser, renewal)) {
+          return renewal;
+        }
 
-    renewal.status = "approved";
-    renewal.approvedBy = currentUser.email;
-    renewal.approvedAt = new Date().toISOString();
-    recordApproval(currentUser, renewal);
-    setRenewalRows(renewalRows);
+        const approved = {
+          ...renewal,
+          status: "approved",
+          approvedBy: currentUser.email,
+          approvedAt: new Date().toISOString(),
+        };
+        recordApproval(currentUser, approved);
+        return approved;
+      }),
+    );
   }
 
   function requestException(id) {
-    const renewal = renewalRows.find((item) => item.id === id);
-    renewal.status = "exception-requested";
-    renewal.exceptionRequestedBy = currentUser.email;
-    setRenewalRows(renewalRows);
+    setRenewalRows((currentRows) =>
+      currentRows.map((renewal) =>
+        renewal.id === id && renewal.status !== "approved"
+          ? { ...renewal, status: "exception-requested", exceptionRequestedBy: currentUser.email }
+          : renewal,
+      ),
+    );
   }
 
   return (

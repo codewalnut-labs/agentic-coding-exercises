@@ -95,7 +95,7 @@ export const accessRequests = [
     approvals: {
       manager: "approved",
       security: "not-required",
-      dataOwner: "approved",
+      dataOwner: "not-started",
     },
     policyChecks: [
       { id: "employment", label: "Active employee", result: "passed", owner: "HRIS" },

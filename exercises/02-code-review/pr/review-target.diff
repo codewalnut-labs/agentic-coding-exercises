@@ -1,14 +1,14 @@
-﻿diff --git a/src/App.jsx b/src/App.jsx
-index 13d1ef4..b84d922 100644
+diff --git a/src/App.jsx b/src/App.jsx
+index a4c0927..a6a1ce0 100644
 --- a/src/App.jsx
 +++ b/src/App.jsx
-@@
+@@ -1,4 +1,4 @@
 -import { useMemo, useState } from "react";
 +import { useEffect, useMemo, useState } from "react";
  import { ApprovalDrawer } from "./components/ApprovalDrawer.jsx";
  import { RenewalDashboard } from "./components/RenewalDashboard.jsx";
  import { RenewalFilters } from "./components/RenewalFilters.jsx";
- import { RenewalTable } from "./components/RenewalTable.jsx";
+@@ -6,7 +6,10 @@ import { RenewalTable } from "./components/RenewalTable.jsx";
  import { renewals } from "./data/renewals.js";
  import { canApproveRenewal } from "./permissions.js";
  import { projectedTotal, summarizePortfolio } from "./pricing.js";
@@ -16,23 +16,25 @@ index 13d1ef4..b84d922 100644
  import { recordApproval } from "./services/auditLog.js";
 +import { exportRenewalsCsv } from "./services/exportCsv.js";
 +import { sendApprovalDigest } from "./services/notifications.js";
-@@
+ 
  const currentUser = {
    email: "taylor.manager@example.com",
-   role: "sales-manager",
+@@ -14,6 +17,8 @@ const currentUser = {
    region: "US",
    approvalLimit: 250000,
    teams: ["enterprise", "strategic"],
 +  featureFlags: ["bulk-approve", "csv-export", "debug-audit"],
 +  sessionToken: localStorage.getItem("renewal-admin-token"),
  };
-@@
+ 
+ export default function App() {
+@@ -22,13 +27,15 @@ export default function App() {
    const [status, setStatus] = useState("all");
    const [segment, setSegment] = useState("all");
    const [selectedId, setSelectedId] = useState(renewals[0].id);
 +  const [selectedIds, setSelectedIds] = useState([]);
 +  const [lastSyncMessage, setLastSyncMessage] = useState("");
-
+ 
    const visibleRenewals = useMemo(() => {
 -    const normalizedQuery = query.trim().toLowerCase();
      return renewalRows.filter((renewal) => {
@@ -45,10 +47,10 @@ index 13d1ef4..b84d922 100644
        const matchesStatus = status === "all" || renewal.status === status;
        const matchesSegment = segment === "all" || renewal.segment === segment;
        return matchesQuery && matchesStatus && matchesSegment;
-@@
-
+@@ -40,32 +47,52 @@ export default function App() {
+ 
    const portfolio = useMemo(() => summarizePortfolio(visibleRenewals), [visibleRenewals]);
-
+ 
 -  function approveRenewal(id) {
 -    setRenewalRows((currentRows) =>
 -      currentRows.map((renewal) => {
@@ -84,13 +86,14 @@ index 13d1ef4..b84d922 100644
 +    approveRenewalInBilling(currentUser, renewal);
 +    setRenewalRows(renewalRows);
    }
-
+ 
    function requestException(id) {
 -    setRenewalRows((currentRows) =>
 -      currentRows.map((renewal) =>
--        renewal.id === id ? { ...renewal, status: "exception-requested" } : renewal,
+-        renewal.id === id && renewal.status !== "approved"
+-          ? { ...renewal, status: "exception-requested", exceptionRequestedBy: currentUser.email }
+-          : renewal,
 -      ),
--    );
 +    const renewal = renewalRows.find((item) => item.id === id);
 +    renewal.status = "exception-requested";
 +    renewal.exceptionRequestedBy = currentUser.email;
@@ -117,12 +120,10 @@ index 13d1ef4..b84d922 100644
 +  function toggleSelected(id) {
 +    setSelectedIds((current) =>
 +      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
-+    );
+     );
    }
-@@
-       <header className="page-header">
-         <div>
-           <p className="eyebrow">Exercise 02</p>
+ 
+@@ -77,8 +104,18 @@ export default function App() {
            <h1>Renewal Approval PR</h1>
            <p>Review this PR for regressions, anti-patterns, security issues, and missing checks.</p>
          </div>
@@ -135,11 +136,13 @@ index 13d1ef4..b84d922 100644
 +          </button>
 +        </div>
        </header>
-
+ 
 +      {lastSyncMessage && <p className="sync-message">{lastSyncMessage}</p>}
 +
        <RenewalDashboard portfolio={portfolio} />
-@@
+ 
+       <section className="workspace">
+@@ -96,9 +133,11 @@ export default function App() {
              currentUser={currentUser}
              renewals={visibleRenewals}
              selectedId={selectedRenewal?.id}
@@ -150,24 +153,20 @@ index 13d1ef4..b84d922 100644
 +            onToggleSelect={toggleSelected}
              projectedTotal={projectedTotal}
            />
+         </div>
 diff --git a/src/components/ApprovalDrawer.jsx b/src/components/ApprovalDrawer.jsx
-index 37f3a28..c8db21f 100644
+index 430d313..9becda1 100644
 --- a/src/components/ApprovalDrawer.jsx
 +++ b/src/components/ApprovalDrawer.jsx
-@@
- export function ApprovalDrawer({
-   currentUser,
-   renewal,
-   onApprove,
-   onRequestException,
-@@
+@@ -20,6 +20,7 @@ export function ApprovalDrawer({
+     <aside className="panel drawer">
        <p className="section-kicker">Approval detail</p>
        <h2>{renewal.customer}</h2>
 +      <p className="drawer-note" dangerouslySetInnerHTML={{ __html: renewal.note }} />
-
+ 
        <dl className="detail-list">
-@@
          <div>
+@@ -46,6 +47,14 @@ export function ApprovalDrawer({
            <dt>Due in</dt>
            <dd>{renewal.dueInDays} days</dd>
          </div>
@@ -180,35 +179,33 @@ index 37f3a28..c8db21f 100644
 +          <dd>{renewal.internalNotes}</dd>
 +        </div>
        </dl>
-
+ 
        <p className="approval-hint">{approvalHint(currentUser, renewal)}</p>
-
-       <div className="drawer-actions">
--        <button type="button" onClick={() => onApprove(renewal.id)}>
-+        <button type="button" onClick={() => onApprove(renewal.id)}>
-           Approve renewal
-         </button>
-         <button className="secondary-button" type="button" onClick={() => onRequestException(renewal.id)}>
+@@ -57,7 +66,6 @@ export function ApprovalDrawer({
+         <button
+           className="secondary-button"
+           type="button"
+-          disabled={renewal.status === "approved"}
+           onClick={() => onRequestException(renewal.id)}
+         >
+           Request exception
 diff --git a/src/components/RenewalDashboard.jsx b/src/components/RenewalDashboard.jsx
-index 7d1a133..5db3f8c 100644
+index 73e320e..b05da3b 100644
 --- a/src/components/RenewalDashboard.jsx
 +++ b/src/components/RenewalDashboard.jsx
-@@
- export function RenewalDashboard({ portfolio }) {
-   const metrics = [
-     { label: "Projected revenue", value: formatMoney(portfolio.projectedRevenue) },
+@@ -6,6 +6,7 @@ export function RenewalDashboard({ portfolio }) {
      { label: "Exceptions", value: portfolio.exceptionCount },
      { label: "High discounts", value: portfolio.highDiscountCount },
      { label: "Weighted discount", value: `${Math.round(portfolio.weightedDiscount * 100)}%` },
 +    { label: "At risk", value: `${Math.round((portfolio.highDiscountCount / portfolio.totalCount) * 100)}%` },
    ];
-
+ 
    return (
 diff --git a/src/components/RenewalFilters.jsx b/src/components/RenewalFilters.jsx
-index 52f3a11..0c19fb4 100644
+index cb07d4e..aab60ee 100644
 --- a/src/components/RenewalFilters.jsx
 +++ b/src/components/RenewalFilters.jsx
-@@
+@@ -11,6 +11,7 @@ export function RenewalFilters({
        <label>
          Search
          <input
@@ -216,22 +213,19 @@ index 52f3a11..0c19fb4 100644
            placeholder="Customer or owner"
            value={query}
            onChange={(event) => onQueryChange(event.target.value)}
-         />
-@@
-         <select value={status} onChange={(event) => onStatusChange(event.target.value)}>
-           <option value="all">All statuses</option>
+@@ -24,6 +25,7 @@ export function RenewalFilters({
            <option value="pending">Pending</option>
            <option value="approved">Approved</option>
            <option value="exception-requested">Exception requested</option>
 +          <option value="deleted">Deleted</option>
          </select>
        </label>
+ 
 diff --git a/src/components/RenewalTable.jsx b/src/components/RenewalTable.jsx
-index 71a52ac..84de912 100644
+index 4740cde..758fe4a 100644
 --- a/src/components/RenewalTable.jsx
 +++ b/src/components/RenewalTable.jsx
-@@
- export function RenewalTable({
+@@ -5,9 +5,11 @@ export function RenewalTable({
    currentUser,
    renewals,
    selectedId,
@@ -242,7 +236,11 @@ index 71a52ac..84de912 100644
 +  onToggleSelect,
    projectedTotal,
  }) {
-@@
+   return (
+@@ -21,15 +23,20 @@ export function RenewalTable({
+       </div>
+ 
+       <div className="renewal-list">
 -        {renewals.map((renewal) => (
 +        {renewals.map((renewal, index) => (
            <article
@@ -262,14 +260,14 @@ index 71a52ac..84de912 100644
 +              <p dangerouslySetInnerHTML={{ __html: renewal.note }} />
                <div className="tag-row">
                  {renewal.riskFlags.map((flag) => (
-@@
-             <div className="money">
+                   <span className="tag" key={flag}>
+@@ -43,12 +50,13 @@ export function RenewalTable({
                <span className={`status ${renewal.status}`}>{renewal.status}</span>
                <strong>{formatMoney(projectedTotal(renewal))}</strong>
                <small>{formatMoney(marginAfterDiscount(renewal))} margin</small>
 +              <small>{renewal.discountPercent * 100}% discount</small>
              </div>
-
+ 
              <div className="card-actions">
                <button
                  type="button"
@@ -278,12 +276,19 @@ index 71a52ac..84de912 100644
                  onClick={(event) => {
                    event.stopPropagation();
                    onApprove(renewal.id);
+@@ -59,7 +67,6 @@ export function RenewalTable({
+               <button
+                 className="secondary-button"
+                 type="button"
+-                disabled={renewal.status === "approved"}
+                 onClick={(event) => {
+                   event.stopPropagation();
+                   onRequestException(renewal.id);
 diff --git a/src/data/renewals.js b/src/data/renewals.js
-index 0a8770d..95a1be2 100644
+index 2f0ef03..787de14 100644
 --- a/src/data/renewals.js
 +++ b/src/data/renewals.js
-@@
-     grossMarginPercent: 0.71,
+@@ -13,6 +13,8 @@ export const renewals = [
      status: "pending",
      health: "green",
      dueInDays: 14,
@@ -292,8 +297,7 @@ index 0a8770d..95a1be2 100644
      riskFlags: ["Security review complete", "Procurement signer pending"],
      note: "Strategic account. Renewal requested before quarter close.",
    },
-@@
-     grossMarginPercent: 0.63,
+@@ -30,8 +32,10 @@ export const renewals = [
      status: "pending",
      health: "yellow",
      dueInDays: 5,
@@ -303,8 +307,9 @@ index 0a8770d..95a1be2 100644
 -    note: "Asks for <strong>exception approval</strong> due to expansion.",
 +    note: "Asks for <strong>exception approval</strong> due to expansion. <img src=x onerror=alert('renewal')>",
    },
-@@
-     grossMarginPercent: 0.78,
+   {
+     id: "ren-1003",
+@@ -47,6 +51,8 @@ export const renewals = [
      status: "approved",
      health: "green",
      dueInDays: 31,
@@ -313,8 +318,7 @@ index 0a8770d..95a1be2 100644
      riskFlags: ["Auto-renewal eligible"],
      note: "Low risk renewal.",
    },
-@@
-     grossMarginPercent: 0.66,
+@@ -64,6 +70,8 @@ export const renewals = [
      status: "pending",
      health: "red",
      dueInDays: 3,
@@ -324,24 +328,25 @@ index 0a8770d..95a1be2 100644
      note: "Needs manager approval before finance countersignature.",
    },
 diff --git a/src/permissions.js b/src/permissions.js
-index 3ac5bf7..d725ad4 100644
+index 179d3da..dad4334 100644
 --- a/src/permissions.js
 +++ b/src/permissions.js
-@@
- export function canApproveRenewal(user, renewal) {
-   if (!renewal) {
+@@ -3,10 +3,7 @@ export function canApproveRenewal(user, renewal) {
      return false;
    }
-
+ 
 -  const withinLimit = renewal.contractValue <= user.approvalLimit;
 -  const sameRegion = renewal.region === user.region;
 -  const needsException = renewal.discountPercent > 0.25 || renewal.status === "exception-requested";
 -  return user.role === "sales-manager" && withinLimit && sameRegion && !needsException;
 +  return user.role !== "viewer" && renewal.status !== "approved";
  }
-
+ 
  export function approvalHint(user, renewal) {
-@@
+@@ -14,9 +11,5 @@ export function approvalHint(user, renewal) {
+     return "Select a renewal to review approval requirements.";
+   }
+ 
 -  if (canApproveRenewal(user, renewal)) {
 -    return `${user.email} can approve this renewal.`;
 -  }
@@ -350,20 +355,20 @@ index 3ac5bf7..d725ad4 100644
 +  return `${user.email} can approve this renewal.`;
  }
 diff --git a/src/pricing.js b/src/pricing.js
-index b4f6b10..7100f7a 100644
+index cc9ca92..006b37e 100644
 --- a/src/pricing.js
 +++ b/src/pricing.js
-@@
+@@ -1,28 +1,33 @@
  export function projectedTotal(renewal) {
 -  const cappedDiscount = Math.min(renewal.discountPercent, 0.25);
 -  return Math.round(renewal.contractValue * (1 - cappedDiscount) + renewal.expansionARR);
 +  return renewal.contractValue - renewal.contractValue * renewal.discountPercent + renewal.expansionARR;
  }
-
+ 
  export function marginAfterDiscount(renewal) {
    return projectedTotal(renewal) * renewal.grossMarginPercent;
  }
-+
+ 
 +export function calculateCommission(renewal) {
 +  if (renewal.segment === "strategic") {
 +    return projectedTotal(renewal) * 0.12;
@@ -371,21 +376,20 @@ index b4f6b10..7100f7a 100644
 +
 +  return renewal.contractValue * 0.08;
 +}
-
++
  export function summarizePortfolio(renewals) {
    const projectedRevenue = renewals.reduce((total, renewal) => total + projectedTotal(renewal), 0);
    const exceptionCount = renewals.filter((renewal) => renewal.status === "exception-requested").length;
    const highDiscountCount = renewals.filter((renewal) => renewal.discountPercent > 0.25).length;
 -  const totalContractValue = renewals.reduce((total, renewal) => total + renewal.contractValue, 0);
--  const weightedDiscount =
+   const weightedDiscount =
 -    totalContractValue === 0
 -      ? 0
 -      : renewals.reduce((total, renewal) => total + renewal.discountPercent * renewal.contractValue, 0) /
 -        totalContractValue;
-+  const weightedDiscount =
 +    renewals.reduce((total, renewal) => total + renewal.discountPercent * renewal.contractValue, 0) /
 +    renewals.reduce((total, renewal) => total + renewal.contractValue, 0);
-
+ 
    return {
      projectedRevenue,
      exceptionCount,
@@ -394,12 +398,13 @@ index b4f6b10..7100f7a 100644
 +    totalCount: renewals.length,
    };
  }
+ 
 diff --git a/src/services/approvalApi.js b/src/services/approvalApi.js
 new file mode 100644
-index 0000000..7831d51
+index 0000000..561910c
 --- /dev/null
 +++ b/src/services/approvalApi.js
-@@
+@@ -0,0 +1,32 @@
 +const BILLING_APPROVAL_URL = "https://billing-admin.example.internal/renewals/approve";
 +
 +export async function approveRenewalInBilling(user, renewal) {
@@ -433,10 +438,10 @@ index 0000000..7831d51
 +  );
 +}
 diff --git a/src/services/auditLog.js b/src/services/auditLog.js
-index c0ab432..f44cfe1 100644
+index cec7578..16f52b6 100644
 --- a/src/services/auditLog.js
 +++ b/src/services/auditLog.js
-@@
+@@ -3,19 +3,14 @@ const AUDIT_LOG_KEY = "renewal-approval-events";
  export function recordApproval(user, renewal) {
    const event = {
      type: "renewal.approved",
@@ -449,19 +454,23 @@ index c0ab432..f44cfe1 100644
 +    token: localStorage.getItem("renewal-admin-token"),
      createdAt: new Date().toISOString(),
    };
-
+ 
    const existingEvents = JSON.parse(localStorage.getItem(AUDIT_LOG_KEY) || "[]");
    existingEvents.push(event);
    localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(existingEvents));
 -  sendAuditEvent(event);
+-}
+-
+-function sendAuditEvent(event) {
+-  console.info("queued approval audit event", event.type, event.renewalId);
 +  console.info("approval audit event", event);
  }
 diff --git a/src/services/exportCsv.js b/src/services/exportCsv.js
 new file mode 100644
-index 0000000..2b26d41
+index 0000000..72fa63c
 --- /dev/null
 +++ b/src/services/exportCsv.js
-@@
+@@ -0,0 +1,27 @@
 +export function exportRenewalsCsv(renewals) {
 +  const columns = [
 +    "id",
@@ -491,29 +500,26 @@ index 0000000..2b26d41
 +}
 diff --git a/src/services/notifications.js b/src/services/notifications.js
 new file mode 100644
-index 0000000..a735a94
+index 0000000..36abc19
 --- /dev/null
 +++ b/src/services/notifications.js
-@@
+@@ -0,0 +1,5 @@
 +export function sendApprovalDigest(user, renewals) {
 +  const message = `${user.email} approved ${renewals.length} renewals`;
 +  console.log("approval digest", { user, renewals });
 +  window.alert(message);
 +}
 diff --git a/src/styles.css b/src/styles.css
-index 6200afd..f94c422 100644
+index ecd08fc..95d065d 100644
 --- a/src/styles.css
 +++ b/src/styles.css
-@@
- .page-header {
-   display: flex;
-   align-items: center;
+@@ -34,6 +34,18 @@ select {
    justify-content: space-between;
    gap: 16px;
    padding: 24px;
 +  min-width: 1180px;
- }
-
++}
++
 +.header-actions {
 +  display: flex;
 +  gap: 8px;
@@ -523,8 +529,11 @@ index 6200afd..f94c422 100644
 +  color: #ffffff;
 +  background: #247857;
 +  padding: 8px;
-+}
-+
+ }
+ 
+ .page-header p:last-child {
+@@ -58,7 +70,7 @@ p {
+ 
  .metric-strip {
    display: grid;
 -  grid-template-columns: repeat(4, 1fr);
@@ -532,7 +541,8 @@ index 6200afd..f94c422 100644
    gap: 12px;
    margin-top: 16px;
  }
-@@
+@@ -144,11 +156,12 @@ select {
+ 
  .renewal-card {
    display: grid;
 -  grid-template-columns: minmax(0, 1fr) 160px 130px;
@@ -543,7 +553,10 @@ index 6200afd..f94c422 100644
    cursor: pointer;
 +  min-height: 180px;
  }
-@@
+ 
+ .renewal-card.selected {
+@@ -169,8 +182,8 @@ select {
+ 
  .tag {
    padding: 5px 7px;
 -  color: #275344;
@@ -552,23 +565,24 @@ index 6200afd..f94c422 100644
 +  background: #b8d5c7;
    font-size: 12px;
  }
-@@
+ 
+@@ -209,7 +222,7 @@ button {
+ }
+ 
  button:disabled {
 -  opacity: 0.45;
 +  opacity: 0.95;
    cursor: not-allowed;
  }
-@@
- @media (max-width: 760px) {
-   .metric-strip,
-   .workspace,
-   .filters,
-   .page-header,
-   .renewal-card {
-     grid-template-columns: 1fr;
+ 
+@@ -254,6 +267,10 @@ dd {
+     align-items: stretch;
    }
-+
+ 
 +  .drawer {
 +    display: none;
 +  }
- }
++
+   .money {
+     justify-items: start;
+   }

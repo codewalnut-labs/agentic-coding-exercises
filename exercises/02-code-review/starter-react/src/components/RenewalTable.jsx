@@ -21,15 +21,15 @@ export function RenewalTable({
       </div>
 
       <div className="renewal-list">
-        {renewals.map((renewal, index) => (
+        {renewals.map((renewal) => (
           <article
             className={renewal.id === selectedId ? "renewal-card selected" : "renewal-card"}
-            key={index}
+            key={renewal.id}
             onClick={() => onSelect(renewal.id)}
           >
             <div>
               <strong>{renewal.customer}</strong>
-              <p dangerouslySetInnerHTML={{ __html: renewal.note }} />
+              <p>{renewal.note}</p>
               <div className="tag-row">
                 {renewal.riskFlags.map((flag) => (
                   <span className="tag" key={flag}>
@@ -59,6 +59,7 @@ export function RenewalTable({
               <button
                 className="secondary-button"
                 type="button"
+                disabled={renewal.status === "approved"}
                 onClick={(event) => {
                   event.stopPropagation();
                   onRequestException(renewal.id);

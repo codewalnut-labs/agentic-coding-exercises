@@ -11,6 +11,43 @@ export const workflowStages = [
   "rolled-back",
 ];
 
+const completedStagesByStatus = {
+  draft: [],
+  submitted: ["draft"],
+  "manager-approved": ["draft", "submitted"],
+  "security-review": ["draft", "submitted", "manager-approved"],
+  "data-owner-review": ["draft", "submitted", "manager-approved", "security-review"],
+  provisioning: ["draft", "submitted", "manager-approved", "security-review", "data-owner-review"],
+  provisioned: ["draft", "submitted", "manager-approved", "security-review", "data-owner-review", "provisioning"],
+  "failed-provisioning": [
+    "draft",
+    "submitted",
+    "manager-approved",
+    "security-review",
+    "data-owner-review",
+    "provisioning",
+  ],
+  "rollback-requested": [
+    "draft",
+    "submitted",
+    "manager-approved",
+    "security-review",
+    "data-owner-review",
+    "provisioning",
+    "failed-provisioning",
+  ],
+  "rolled-back": [
+    "draft",
+    "submitted",
+    "manager-approved",
+    "security-review",
+    "data-owner-review",
+    "provisioning",
+    "failed-provisioning",
+    "rollback-requested",
+  ],
+};
+
 export function nextStepFor(request) {
   if (request.status === "draft") {
     return {
@@ -147,13 +184,12 @@ export function buildActorList(request) {
 }
 
 export function buildFlowSteps(request) {
-  return workflowStages.map((stage) => {
-    const currentIndex = workflowStages.indexOf(request.status);
-    const stageIndex = workflowStages.indexOf(stage);
+  const completedStages = new Set(completedStagesByStatus[request.status] ?? []);
 
+  return workflowStages.map((stage) => {
     return {
       stage,
-      state: stage === request.status ? "current" : stageIndex < currentIndex ? "complete" : "waiting",
+      state: stage === request.status ? "current" : completedStages.has(stage) ? "complete" : "waiting",
     };
   });
 }

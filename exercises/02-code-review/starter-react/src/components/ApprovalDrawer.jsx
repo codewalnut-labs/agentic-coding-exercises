@@ -54,7 +54,12 @@ export function ApprovalDrawer({
         <button type="button" onClick={() => onApprove(renewal.id)}>
           Approve renewal
         </button>
-        <button className="secondary-button" type="button" onClick={() => onRequestException(renewal.id)}>
+        <button
+          className="secondary-button"
+          type="button"
+          disabled={renewal.status === "approved"}
+          onClick={() => onRequestException(renewal.id)}
+        >
           Request exception
         </button>
       </div>
