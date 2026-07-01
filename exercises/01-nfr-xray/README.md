@@ -36,7 +36,7 @@ cd ~/architect-playbook
 claude
 ```
 
-In Claude Code, run:
+In Claude Code or any other coding agent, run:
 
 ```text
 /install-architect-playbook-globally
