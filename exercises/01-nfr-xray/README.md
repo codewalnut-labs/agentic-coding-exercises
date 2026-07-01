@@ -40,17 +40,6 @@ In Claude Code, run:
 /install-architect-playbook-globally
 ```
 
-Do not start by fixing code. First understand the system, risks, and missing controls.
-
-Suggested agent prompt:
-
-```text
-Use the Architect Playbook to audit this repo for enterprise readiness.
-Assess security, performance, scalability, accessibility, testing,
-observability, operability, and production readiness.
-Summarize the highest-risk findings with evidence and recommended fixes.
-```
-
 ## Expected Output
 
 Add a file named `NFR_XRAY.md` in this exercise folder.
@@ -62,5 +51,5 @@ Your document should include:
 - Severity-ranked gaps.
 - Evidence from the code.
 - Evidence from Architect Playbook findings.
-- Recommended improvements.
+- Recommended improvements, not code changes.
 - Tests or checks you would add before production.
