@@ -4,7 +4,7 @@
 
 Review a PR in 5 minutes.
 
-You are given a small React project and a PR diff. Use an AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
+You are given a small React project and a PR diff. Use Claude Code or any other AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
 
 ## Starter Project
 
@@ -29,7 +29,7 @@ exercises/02-code-review/pr/review-target.diff
 
 ## How To Go About It
 
-Run the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) on the PR and read the issues it surfaces by severity.
+Use the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) if your agent supports skills. If not, use the linked skill as review guidance and ask your coding agent to review the PR by severity.
 
 Suggested agent prompt:
 

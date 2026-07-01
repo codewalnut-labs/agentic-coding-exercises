@@ -4,7 +4,7 @@
 
 Generate a diagram for your feature.
 
-You are given a small React implementation of a feature workflow. Use an AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
+You are given a small React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
 
 ## Starter Project
 
@@ -22,7 +22,7 @@ npm run dev
 
 ## How To Go About It
 
-Use the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) on the feature you built or inspected.
+Use the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) if your agent supports skills. If not, use the linked skill as diagram guidance and ask your coding agent to generate the diagrams.
 
 Suggested agent prompt:
 

@@ -4,7 +4,7 @@
 
 Check whether a codebase is enterprise-ready or not.
 
-You are given a small React portal that looks like an internal enterprise workflow tool. Use an AI coding agent to reverse engineer the repo and audit it across security, performance, scalability, accessibility, testing, and operational readiness.
+You are given a small React portal that looks like an internal enterprise workflow tool. Use Claude Code or any other AI coding agent to reverse engineer the repo and audit it across security, performance, scalability, accessibility, testing, and operational readiness.
 
 ## Starter Project
 
@@ -24,9 +24,11 @@ npm run dev
 
 Use the [Architect Playbook](https://github.com/CW-Codewalnut/ArchitectPlaybook) to guide the audit.
 
-The Architect Playbook is a Claude Code slash-command playbook for auditing codebases. Install it before starting this exercise.
+You can complete this exercise with Claude Code or any other coding agent. The slash-command install below is for Claude Code only; if your agent does not support Claude Code slash commands, use the Architect Playbook repository as audit reference material.
 
 ### Install The Playbook
+
+For Claude Code users:
 
 ```bash
 git clone https://github.com/CW-Codewalnut/ArchitectPlaybook ~/architect-playbook

@@ -24,7 +24,7 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 ## Requirements
 
 - Node.js 20+ for starter projects.
-- An AI coding agent.
+- Claude Code or any other AI coding agent.
 
 ## Recommended Resources
 
