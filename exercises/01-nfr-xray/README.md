@@ -24,7 +24,7 @@ npm run dev
 
 Use the [Architect Playbook](https://github.com/CW-Codewalnut/ArchitectPlaybook) to guide the audit.
 
-The Architect Playbook is a Claude Code slash-command playbook for auditing codebases. Install it once, prepare the target project, then run focused audits.
+The Architect Playbook is a Claude Code slash-command playbook for auditing codebases. Install it before starting this exercise.
 
 ### Install The Playbook
 
@@ -40,44 +40,14 @@ In Claude Code, run:
 /install-architect-playbook-globally
 ```
 
-### Audit This Exercise
-
-Open this exercise starter in Claude Code:
-
-```bash
-cd exercises/01-nfr-xray/starter-react
-claude
-```
-
-Start by mapping the project:
-
-```text
-/pre-audit-setup
-```
-
-Then run the audits that matter for enterprise readiness:
-
-```text
-/security-audit --worktree
-/performance-audit --worktree
-/accessibility-audit --worktree
-/architecture-audit --worktree
-/testing-audit --worktree
-/react-audit --worktree
-/quality-gates-audit --worktree
-/error-handling-audit --worktree
-```
-
-The `--worktree` flag keeps each audit isolated. Read the Top 5 recommendations in chat and use the saved `.architect-audits/` reports as evidence for your final document.
-
 Do not start by fixing code. First understand the system, risks, and missing controls.
 
 Suggested agent prompt:
 
 ```text
-Use the installed Architect Playbook to audit this repo for enterprise readiness.
-Run pre-audit setup, then run security, performance, accessibility,
-architecture, testing, React, quality-gates, and error-handling audits.
+Use the Architect Playbook to audit this repo for enterprise readiness.
+Assess security, performance, scalability, accessibility, testing,
+observability, operability, and production readiness.
 Summarize the highest-risk findings with evidence and recommended fixes.
 ```
 

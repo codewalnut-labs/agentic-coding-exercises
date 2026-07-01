@@ -25,7 +25,6 @@ Solution PRs are reviewed for feedback and should not be merged into `main`. The
 
 - Node.js 20+ for starter projects.
 - An AI coding agent.
-- Claude Code if you want to run the Architect Playbook slash-command workflow for Exercise 01.
 
 ## Recommended Resources
 
