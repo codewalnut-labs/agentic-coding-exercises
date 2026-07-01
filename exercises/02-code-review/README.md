@@ -29,7 +29,7 @@ exercises/02-code-review/pr/review-target.diff
 
 ## How To Go About It
 
-Use the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) if your agent supports skills. If not, use the linked skill as review guidance and ask your coding agent to review the PR by severity.
+Install the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) and use it to review the PR. Rank the issues it surfaces by severity.
 
 ## Expected Output
 
