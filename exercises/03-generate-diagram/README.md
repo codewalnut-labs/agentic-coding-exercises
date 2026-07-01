@@ -1,10 +1,12 @@
-# Exercise 03: Generate Diagram
+**Exercise 03**
+
+# Generate Diagram
 
 ## Your Mission
 
 Generate a diagram for your feature.
 
-You are given a small React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
+You are given a medium-sized React implementation of a feature workflow. Use Claude Code or any other AI coding agent to understand the feature and generate two diagrams: a sequence diagram and a flow diagram.
 
 ## Starter Project
 
@@ -22,7 +24,7 @@ npm run dev
 
 ## How To Go About It
 
-Install the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) and use it to inspect the feature. Generate a sequence diagram and a flow diagram that show actors, state transitions, system steps, success paths, and failure paths.
+Use the [Excalidraw diagram-generator skill](https://www.skills.sh/github/awesome-copilot/excalidraw-diagram-generator) on the feature you built to draw a sequence diagram and a flow diagram.
 
 ## Expected Output
 

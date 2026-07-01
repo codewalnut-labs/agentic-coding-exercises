@@ -1,10 +1,12 @@
-# Exercise 02: Code Review
+**Exercise 02**
+
+# Code Review
 
 ## Your Mission
 
 Review a PR in 5 minutes.
 
-You are given a small React project and a PR diff. Use Claude Code or any other AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
+You are given a medium-sized React project and a PR diff. Use Claude Code or any other AI coding agent to review the PR for regressions, anti-patterns, security issues, inconsistent conventions, and missing tests.
 
 ## Starter Project
 
@@ -28,7 +30,7 @@ exercises/02-code-review/pr/review-target.diff
 
 ## How To Go About It
 
-Install the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) and use it to review the PR. Rank the issues it surfaces by severity.
+Run the [Superpowers code-review skill](https://www.skills.sh/obra/superpowers/requesting-code-review) on a PR and read the issues it surfaces by severity.
 
 ## Expected Output
 
