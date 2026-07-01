@@ -36,7 +36,7 @@ cd ~/architect-playbook
 claude
 ```
 
-Then run this Claude Code slash command:
+In Claude Code, run:
 
 ```text
 /install-architect-playbook-globally
